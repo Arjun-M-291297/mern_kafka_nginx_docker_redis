@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+
+  bootstrap-service:
+    build: ./bootstrap-service
+    environment:
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+      - kafka
+    restart: "no"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3000:3000"
+    environment:
+      DB_URL: mongodb://mongo:27017/mern
+    depends_on:
+      - mongo
+      - bootstrap-service
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3001:3001"
+    environment:
+      DB_URL: mongodb://mongo:27017/mern
+    depends_on:
+      - mongo
+      - bootstrap-service
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3002:3002"
+    environment:
+      DB_URL: mongodb://mongo:27017/mern
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+      - mongo
+      - kafka
+      - bootstrap-service
+
+  wallet-service:
+    build: ./wallet-service
+    ports:
+      - "3003:3003"
+    environment:
+      DB_URL: mongodb://mongo:27017/mern
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+      - mongo
+      - kafka
+      - bootstrap-service
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+      - wallet-service
