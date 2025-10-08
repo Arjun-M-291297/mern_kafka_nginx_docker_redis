@@ -28,7 +28,7 @@ const startServer = async () => {
 
     console.log("✅ Database connected");
 
-    app.listen(3001, async () => {
+    app.listen(3001,'0.0.0.0', async () => {
       await connectProducer();
       await createConsumer("product-service-group", "product-events", handleOrderEvent);
       console.log("🚀 Product service running on port 3001");

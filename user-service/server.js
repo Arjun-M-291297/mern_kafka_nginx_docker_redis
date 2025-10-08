@@ -19,7 +19,7 @@ const startServer = async () => {
 
     console.log("✅ Database connected");
 
-    app.listen(3000, async () => {
+    app.listen(3000,'0.0.0.0', async () => {
       await connectProducer();
       console.log("🚀 User service running on port 3000");
     });

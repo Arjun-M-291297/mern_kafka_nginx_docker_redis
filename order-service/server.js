@@ -18,9 +18,9 @@ const startServer = async () => {
 
     console.log("✅ Database connected");
 
-    app.listen(3004, async () => {
+    app.listen(3002, "0.0.0.0", async () => {
       await connectProducer();
-      console.log("🚀 Order service running on port 3004");
+      console.log("🚀 Order service running on port 3002");
     });
   } catch (error) {
     console.error("❌ Database connection failed:", error);

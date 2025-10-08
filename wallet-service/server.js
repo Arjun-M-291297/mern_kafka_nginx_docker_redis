@@ -33,7 +33,7 @@ const startServer = async () => {
 
     console.log("✅ Database connected");
 
-    app.listen(3002, async () => {
+    app.listen(3003, "0.0.0.0", async () => {
       await connectProducer();
       await createConsumer("wallet-service-group", "user-events", handleUserEvent);
       await createConsumer("wallet-service-group-order", "order-events", handleOrderEvent);

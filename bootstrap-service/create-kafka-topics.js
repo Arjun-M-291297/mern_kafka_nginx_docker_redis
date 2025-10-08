@@ -1,8 +1,9 @@
-const { Kafka } = require("kafkajs");
-
+import { Kafka } from "kafkajs";
+import dotenv from "dotenv";
+dotenv.config();
 const kafka = new Kafka({
   clientId: "admin-client",
-  brokers: ["localhost:9092"],
+  brokers: [process.env.KAFKA_BROKERS || "kafka:29092"],
 });
 
 const admin = kafka.admin();
